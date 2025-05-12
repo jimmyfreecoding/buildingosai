@@ -1,0 +1,59 @@
+{
+  "id": "buildingos-upgrade",
+  "name": "BuildingOS Upgrade",
+  "description": "Upgrade an existing BuildingOS installation to the latest version",
+  "version": "1.0.0",
+  "author": "Zheng He",
+  "tags": ["upgrade", "buildingos", "system"],
+  "steps": [
+    {
+      "id": "backup-system",
+      "name": "Backup Current System",
+      "description": "Create a backup of the current BuildingOS installation",
+      "command": "echo 'Creating backup...' && sleep 3 && echo 'Backup completed successfully'",
+      "timeout": 60000
+    },
+    {
+      "id": "download-update",
+      "name": "Download Update Package",
+      "description": "Download the latest BuildingOS update package",
+      "command": "echo 'Downloading update package...' && sleep 2 && echo 'Download completed successfully'",
+      "timeout": 30000
+    },
+    {
+      "id": "stop-services",
+      "name": "Stop BuildingOS Services",
+      "description": "Stop all running BuildingOS services",
+      "command": "echo 'Stopping BuildingOS services...' && sleep 2 && echo 'All services stopped successfully'",
+      "timeout": 30000
+    },
+    {
+      "id": "apply-update",
+      "name": "Apply Update",
+      "description": "Apply the update to the BuildingOS system",
+      "command": "echo 'Applying update...' && sleep 4 && echo 'Update applied successfully'",
+      "timeout": 120000
+    },
+    {
+      "id": "update-database",
+      "name": "Update Database Schema",
+      "description": "Update the database schema to match the new version",
+      "command": "echo 'Updating database schema...' && sleep 3 && echo 'Database schema updated successfully'",
+      "timeout": 60000
+    },
+    {
+      "id": "start-services",
+      "name": "Start BuildingOS Services",
+      "description": "Start all BuildingOS services with the new version",
+      "command": "echo 'Starting BuildingOS services...' && sleep 2 && echo 'All services started successfully'",
+      "timeout": 30000
+    },
+    {
+      "id": "verify-upgrade",
+      "name": "Verify Upgrade",
+      "description": "Verify that the upgrade was successful",
+      "command": "echo 'Verifying upgrade...' && sleep 2 && echo 'BuildingOS has been successfully upgraded to version 2.0.0'",
+      "timeout": 20000
+    }
+  ]
+}

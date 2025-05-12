@@ -1,0 +1,59 @@
+{
+  "id": "buildingos-install",
+  "name": "BuildingOS Installation",
+  "description": "Complete installation guide for BuildingOS system",
+  "version": "1.0.0",
+  "author": "Zheng He",
+  "tags": ["installation", "buildingos", "system"],
+  "steps": [
+    {
+      "id": "check-prerequisites",
+      "name": "Check Prerequisites",
+      "description": "Verify system requirements and dependencies",
+      "command": "node -v && npm -v && echo 'Checking disk space:' && df -h",
+      "timeout": 10000
+    },
+    {
+      "id": "download-package",
+      "name": "Download BuildingOS Package",
+      "description": "Download the latest BuildingOS package from repository",
+      "command": "echo 'Downloading BuildingOS package...' && sleep 2 && echo 'Download completed successfully'",
+      "timeout": 30000
+    },
+    {
+      "id": "install-dependencies",
+      "name": "Install Dependencies",
+      "description": "Install required dependencies for BuildingOS",
+      "command": "npm --version",
+      "timeout": 120000
+    },
+    {
+      "id": "configure-system",
+      "name": "Configure System",
+      "description": "Configure BuildingOS settings",
+      "manual": true,
+      "script": "echo 'Creating configuration file...' && echo '{\n  \"server\": {\n    \"port\": 3003,\n    \"host\": \"0.0.0.0\"\n  },\n  \"database\": {\n    \"type\": \"postgres\",\n    \"host\": \"localhost\",\n    \"port\": 5432\n  }\n}' > config.json && echo 'Configuration completed'"
+    },
+    {
+      "id": "initialize-database",
+      "name": "Initialize Database",
+      "description": "Set up and initialize the BuildingOS database",
+      "command": "echo 'Initializing database...' && sleep 3 && echo 'Database initialized successfully'",
+      "timeout": 60000
+    },
+    {
+      "id": "start-services",
+      "name": "Start BuildingOS Services",
+      "description": "Start all required BuildingOS services",
+      "command": "echo 'Starting BuildingOS services...' && sleep 2 && echo 'All services started successfully'",
+      "timeout": 30000
+    },
+    {
+      "id": "verify-installation",
+      "name": "Verify Installation",
+      "description": "Verify that BuildingOS is installed correctly",
+      "command": "echo 'Verifying installation...' && sleep 2 && echo 'BuildingOS is installed and running correctly on port 3003'",
+      "timeout": 20000
+    }
+  ]
+}

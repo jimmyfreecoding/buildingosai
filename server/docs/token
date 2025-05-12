@@ -1,0 +1,94 @@
+在前端目前实现了通过chat的聊天组件，发送信息给openai，并选择合适的mcp tools ，如ssh，然后返回给前台将执行的指令，然后指令传入TerminalX组件，用户手动回车后指令执行，执行结构传回chat组件，在提交后台给openai，然后进行多轮对话。
+目前需要改进一下几点：
+1：在服务端（server2)有任务脚本：buildingos-install.json，通过使用chat同样的websocket方式从后台获得，然后启动这个任务后需要和openai的steps融合，返回到chat中去多轮step的执行。
+2：chat下方输入框字体颜色变成白色，然后输入提交后自动清空
+3：TerminalX组件窗口，光标行停留在整个窗口中部，不是最底部，通过xterm属性设置是否能完成
+
+
+
+用户在聊天界面输入请求
+后端通过AI生成命令
+命令通过eventBus发送到terminalService
+terminalService执行命令
+命令结果应该返回给聊天界面，但这一步出了问题
+
+
+这个新的通信架构解决了之前的问题：
+
+整个前端使用一个全局WebSocket客户端服务
+前端各个组件之间使用事件总线进行通信
+TerminalX组件只负责显示终端输出和发送终端命令
+Chat组件负责处理AI响应和命令执行请求
+这样，当用户在Chat组件中输入请求时：
+
+请求通过WebSocket发送到后端
+后端生成AI响应和可能的命令
+响应通过WebSocket发送回前端
+Chat组件接收响应并显示，包括可能的命令框
+用户点击执行按钮，命令通过事件总线发送到TerminalX组件
+TerminalX组件执行命令并将结果通过WebSocket发送回后端
+后端将命令执行结果通过WebSocket发送回前端
+Chat组件接收命令执行结果并显示
+这个架构清晰地分离了各个组件的
+
+详细说明
+1. Electron 项目结构
+我在 /build 目录中创建了一个完整的 Electron 应用程序，包括：
+
+ package.json - 定义了应用程序的元数据和依赖项
+main.js - Electron 的主进程文件，负责创建窗口和启动服务器
+loading.html - 加载页面，在服务器启动时显示
+icons/ - 存放应用图标的目录
+2. 主进程逻辑 (main.js)
+主进程文件 main.js 包含以下功能：
+
+创建一个 Electron 窗口
+显示加载页面
+启动 Node.js 服务器 (dist/index.js)
+监听服务器输出，等待服务器准备就绪
+当服务器准备好后，将窗口导航到 http://localhost:3003
+处理应用程序关闭时的清理工作
+3. 构建脚本 (build.js)
+我创建了一个构建脚本 build.js，它执行以下步骤：
+
+构建客户端 (Vue 应用)
+构建服务器 (TypeScript)
+将客户端构建结果复制到服务器的 web 目录
+将服务器构建结果复制到 Electron 应用的 dist 目录
+安装 Electron 依赖项
+构建 Electron 应用程序为 Windows .exe 文件
+4. 服务器修改
+我对服务器代码进行了小修改，使其能够在 Electron 环境中正确运行：
+
+添加了检测是否在 Electron 环境中运行的代码
+添加了特定的输出消息，以便 Electron 主进程知道服务器何时准备就绪
+5. 打包配置
+在  package.json 中，我配置了 electron-builder 来打包应用程序：
+
+设置了应用程序 ID 和产品名称
+配置了 Windows 目标为 NSIS 安装程序
+设置了安装程序选项，如允许用户选择安装目录和创建桌面快捷方式
+使用方法
+运行构建脚本：
+构建完成后，Windows 可执行文件将位于 build/release 目录中。
+安装并运行应用程序。它将：
+启动一个 Electron 窗口
+在后台启动 Node.js 服务器
+当服务器准备就绪时，加载 http://localhost:3003
+注意事项
+您需要创建或提供应用程序图标文件 ( icon.ico 和 icon.png)。
+如果您的服务器需要特定的环境变量，您可以在 main.js 中的 spawn 调用中设置它们。
+此配置假设服务器在端口 3003 上运行。如果您使用不同的端口，请相应地更新 main.js。
+如果您的应用程序需要额外的依赖项或配置，您可能需要调整  package.json 和 main.js。
+对于生产环境，您可能需要添加更多的错误处理和日志记录。
+
+
+
+不是这样处理，整个逻辑之前说过：
+1：前端chat输入文字
+2：后端AI进行处理
+3：如果后端确认是需要调用tools，ssh指令时候，发送此结果到前端
+4：前端chat获取到指令执行的结果，在chat界面中出现人为确认信息框
+5：信息确认后，前端chat将指令传输给TerminalX组件，并自动执行
+6：执行结果发送给后台AI
+7：将AI对结果的回复输出到chat，并结束此次任务
