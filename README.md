@@ -13,7 +13,7 @@ BuildingOS AI is a desktop application that combines a Vue 3 frontend with a Typ
 </p>
 
 ## Features
-
+- Easyway to use AI for os command
 - AI chat interface powered by OpenAI and Mastra
 - SSH terminal service
 - Command execution tools
